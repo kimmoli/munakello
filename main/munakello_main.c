@@ -16,7 +16,6 @@
 #include "cmd_system.h"
 #include "cmd_i2ctools.h"
 #include "cmd_display.h"
-#include "display.h"
 
 static const char *TAG = "i2c-tools";
 
@@ -54,20 +53,23 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_console_new_repl_uart(&uart_config, &repl_config, &repl));
 
     register_i2ctools();
-	 register_display();
+	register_display();
     register_system();
 
     printf("\n ==============================================================\n");
-    printf(" |             Steps to Use i2c-tools                         |\n");
-    printf(" |                                                            |\n");
-    printf(" |  1. Try 'help', check all supported commands               |\n");
-    printf(" |  2. Try 'i2cconfig' to configure your I2C bus              |\n");
-    printf(" |  3. Try 'i2cdetect' to scan devices on the bus             |\n");
-    printf(" |  4. Try 'i2cget' to get the content of specific register   |\n");
-    printf(" |  5. Try 'i2cset' to set the value of specific register     |\n");
-    printf(" |  6. Try 'i2cdump' to dump all the register (Experiment)    |\n");
-    printf(" |                                                            |\n");
+    printf(" |          MUNAKELLO                                         |\n");
     printf(" ==============================================================\n\n");
+
+	displays[0].digits[0] = 'E';
+	displays[0].digits[1] = 'G';
+	displays[0].digits[2] = 'G';
+	displays[0].digits[3] = '-';
+	displays[1].digits[0] = 'T';
+	displays[1].digits[1] = 'I';
+	displays[1].digits[2] = 'M';
+	displays[1].digits[3] = 'E';
+
+	updateDisplay();
 
     // start console REPL
     ESP_ERROR_CHECK(esp_console_start_repl(repl));
