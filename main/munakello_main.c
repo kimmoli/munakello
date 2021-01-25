@@ -16,8 +16,14 @@
 #include "cmd_system.h"
 #include "cmd_i2ctools.h"
 #include "cmd_display.h"
+#include "driver/timer.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
 
-static const char *TAG = "i2c-tools";
+static const char *TAG = "munakello";
+
+#define BLINK_GPIO 2
 
 #if CONFIG_EXAMPLE_STORE_HISTORY
 
@@ -48,7 +54,7 @@ void app_main(void)
     initialize_filesystem();
     repl_config.history_save_path = HISTORY_PATH;
 #endif
-    repl_config.prompt = "i2c-tools>";
+    repl_config.prompt = "munakello>";
     // init console REPL environment
     ESP_ERROR_CHECK(esp_console_new_repl_uart(&uart_config, &repl_config, &repl));
 
@@ -73,4 +79,16 @@ void app_main(void)
 
     // start console REPL
     ESP_ERROR_CHECK(esp_console_start_repl(repl));
+
+    gpio_reset_pin(BLINK_GPIO);
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
+
+
+    while (1)
+    {
+        gpio_set_level(BLINK_GPIO, 0);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        gpio_set_level(BLINK_GPIO, 1);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
 }

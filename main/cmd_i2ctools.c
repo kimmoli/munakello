@@ -105,8 +105,6 @@ static void register_i2cconfig(void)
 
 static int do_i2cdetect_cmd(int argc, char **argv)
 {
-    i2c_driver_install(i2c_port, I2C_MODE_MASTER, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
-    i2c_master_driver_initialize();
     uint8_t address;
     printf("     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f\r\n");
     for (int i = 0; i < 128; i += 16) {
@@ -131,7 +129,6 @@ static int do_i2cdetect_cmd(int argc, char **argv)
         printf("\r\n");
     }
 
-    i2c_driver_delete(i2c_port);
     return 0;
 }
 
@@ -176,8 +173,6 @@ static int do_i2cget_cmd(int argc, char **argv)
     }
     uint8_t *data = malloc(len);
 
-    i2c_driver_install(i2c_port, I2C_MODE_MASTER, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
-    i2c_master_driver_initialize();
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
     if (data_addr != -1) {
@@ -209,7 +204,7 @@ static int do_i2cget_cmd(int argc, char **argv)
         ESP_LOGW(TAG, "Read failed");
     }
     free(data);
-    i2c_driver_delete(i2c_port);
+
     return 0;
 }
 
@@ -254,8 +249,6 @@ static int do_i2cset_cmd(int argc, char **argv)
     /* Check data: "-d" option */
     int len = i2cset_args.data->count;
 
-    i2c_driver_install(i2c_port, I2C_MODE_MASTER, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
-    i2c_master_driver_initialize();
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, chip_addr << 1 | WRITE_BIT, ACK_CHECK_EN);
@@ -275,7 +268,7 @@ static int do_i2cset_cmd(int argc, char **argv)
     } else {
         ESP_LOGW(TAG, "Write Failed");
     }
-    i2c_driver_delete(i2c_port);
+
     return 0;
 }
 
@@ -320,8 +313,7 @@ static int do_i2cdump_cmd(int argc, char **argv)
         ESP_LOGE(TAG, "Wrong read size. Only support 1,2,4");
         return 1;
     }
-    i2c_driver_install(i2c_port, I2C_MODE_MASTER, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
-    i2c_master_driver_initialize();
+
     uint8_t data_addr;
     uint8_t data[4];
     int32_t block[16];
@@ -372,7 +364,7 @@ static int do_i2cdump_cmd(int argc, char **argv)
         }
         printf("\r\n");
     }
-    i2c_driver_delete(i2c_port);
+
     return 0;
 }
 

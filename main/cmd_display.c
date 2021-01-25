@@ -19,9 +19,6 @@ DisplayDriver displays[MAX_DISPLAYS];
 
 static int do_display_init_cmd(int argc, char **argv)
 {
-   i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
-	i2c_master_driver_initialize();
-	
 	esp_err_t ret;
 	
 	for (int index = 0; index < MAX_DISPLAYS; index++)
@@ -76,8 +73,6 @@ static int do_display_init_cmd(int argc, char **argv)
 	{
        ESP_LOGW(TAG, "Write Failed");
    }
-
-   i2c_driver_delete(I2C_NUM_0);
 
 	return 0;
 }
@@ -175,10 +170,7 @@ static void register_display_show(void)
 void updateDisplay(void)
 {
    uint8_t txbuf[17] = {0};
-	 
-	i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
-	i2c_master_driver_initialize();
-
+ 
 	esp_err_t ret;
 
 	for (int index=0; index < MAX_DISPLAYS; index++)
@@ -244,12 +236,13 @@ void updateDisplay(void)
 	{
 		ESP_LOGW(TAG, "Write Failed");
 	}
-
-	i2c_driver_delete(I2C_NUM_0);
 }
 
 void register_display(void)
 {
+	i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
+	i2c_master_driver_initialize();
+
 	register_display_init();
 	register_display_show();
 	
